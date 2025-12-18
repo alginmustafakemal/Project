@@ -60,19 +60,88 @@ public class Main {
     // ======== 10 REQUIRED METHODS (Students fill these) ========
 
     public static String mostProfitableCommodityInMonth(int month) {
-        return "DUMMY"; 
+        if (month<12 || month>=0) {
+            String y = null;
+            int[] tot = new int[5];
+            int max = 0;
+            for (int j = 0; j < DAYS; j++) {
+                for (int k = 0; k < commodities.length; k++) {
+                    switch (k) {
+                        case 0:
+                            tot[k] += profitData[month][j][k];
+                            break;
+                        case 1:
+                            tot[k] += profitData[month][j][k];
+                            break;
+                        case 2:
+                            tot[k] += profitData[month][j][k];
+                            break;
+                        case 3:
+                            tot[k] += profitData[month][j][k];
+                            break;
+                        case 4:
+                            tot[k] += profitData[month][j][k];
+                            break;
+                    }
+                }
+                for (int l = 0; l < commodities.length; l++) {
+                    if (tot[l] > max) {
+                        max = tot[l];
+                        y = commodities[l];
+                    }
+                }
+            }
+            return "Commodity totalProfit " +y+" "+max;
+        }
+        else {
+            return "INVALID_MONTH";
+        }
     }
 
     public static int totalProfitOnDay(int month, int day) {
-        return 1234;
+        if(month<12 || month>=0){
+            if (day==0){
+                return -99999;
+            }
+            else if (day-1<DAYS || day-1>=0){
+                int total=0;
+                for (int i=0;i<commodities.length;i++){
+                    total+=profitData[month][day-1][i];
+                }
+                return total;
+            }
+            else {
+                return -99999;
+            }
+        }
+        else{
+            return -99999;
+        }
     }
 
     public static int commodityProfitInRange(String commodity, int from, int to) {
         return 1234;
     }
 
-    public static int bestDayOfMonth(int month) { 
-        return 1234; 
+    public static int bestDayOfMonth(int month) {
+        int dy=0;
+        if (month<12 || month>=0){
+            int[] tot=new int[DAYS];
+            int max=0;
+            for (int i=0;i<DAYS;i++){
+                for(int j=0;j<commodities.length;j++){
+                    tot[i]+=profitData[month][i][j];
+                }
+                if (max<=tot[i]){
+                    max=tot[i];
+                    dy=i;
+                }
+            }
+            return dy+1;
+        }
+        else {
+            return dy;
+        }
     }
     
     public static String bestMonthForCommodity(String comm) { 
