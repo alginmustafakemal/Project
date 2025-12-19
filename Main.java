@@ -1,5 +1,8 @@
 // Main.java — Students version
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,41 +19,37 @@ public class Main {
 
     // ======== REQUIRED METHOD LOAD DATA (Students fill this) ========
     public static void loadData() {
-        for (int i=0;i<months.length;i++){
-            String filename="Data_Files/"+months[i]+".txt";
-            File file=new File(filename);
-            if (file.exists()){
-                try {
-                    Scanner sc = new Scanner(file);
+        for (int i = 0; i < months.length; i++) {
+            Path path = Paths.get("Data_Files", months[i] + ".txt");
+
+            if (Files.exists(path)) {
+                try (Scanner sc = new Scanner(path)) {
                     if (sc.hasNextLine()) {
                         sc.nextLine();
                     }
                     while (sc.hasNextLine()) {
-                        String[] parts = sc.nextLine().split(",");
-                        for (int a = 0; a < parts.length; a++) {
-                            if (parts.length == 3) {
-                                int day = Integer.parseInt(parts[0].trim());
-                                String commodityName = parts[1].trim();
-                                int profit = Integer.parseInt(parts[2].trim());
+                        String line = sc.nextLine();
+                        String[] parts = line.split(",");
 
-                                int commodityIndex = -1;
-                                for (int k = 0; k < commodities.length; k++) {
-                                    if (commodities[k].equals(commodityName)) {
-                                        commodityIndex = k;
-                                        break;
-                                    }
-                                }
-                                if (commodityIndex != -1 && day >= 1 && day <= 28) {
-                                    profitData[i][day - 1][commodityIndex] = profit;
+                        if (parts.length == 3) {
+                            int day = Integer.parseInt(parts[0].trim());
+                            String commodityName = parts[1].trim();
+                            int profit = Integer.parseInt(parts[2].trim());
+
+                            int commodityIndex = -1;
+                            for (int k = 0; k < commodities.length; k++) {
+                                if (commodities[k].equalsIgnoreCase(commodityName)) {
+                                    commodityIndex = k;
+                                    break;
                                 }
                             }
 
+                            if (commodityIndex != -1 && day >= 1 && day <= 28) {
+                                profitData[i][day - 1][commodityIndex] = profit;
+                            }
                         }
                     }
-                    sc.close();
-                }
-                catch (FileNotFoundException e){
-                    System.out.println("File couldn't find!"+filename);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -144,20 +143,92 @@ public class Main {
         }
     }
     
-    public static String bestMonthForCommodity(String comm) { 
-        return "DUMMY"; 
+    public static String bestMonthForCommodity(String comm) {
+        for (int a=0;a<commodities.length;a++){
+            if(comm.equals(commodities[a] )){
+                int[] tot=new int[months.length];
+                int bestMnth=profitData[0][0][a];
+                int mnth=0;
+                for (int i=0;i<months.length;i++){
+                    for (int j=0;j<DAYS;j++){
+                        tot[i]+=profitData[i][j][a];
+                    }
+                    if (bestMnth<tot[i]){
+                        bestMnth=tot[i];
+                        mnth=i;
+                    }
+                }
+                return months[mnth];
+            }
+        }
+        return "INVALID_COMMODITY";
     }
 
-    public static int consecutiveLossDays(String comm) { 
-        return 1234; 
+    public static int consecutiveLossDays(String comm) {
+        for (int a=0;a<commodities.length;a++){
+            if (comm.equals(commodities[a])){
+                int bestStreak=0;
+                int[] streak=new int[months.length];
+                for (int y=0;y<streak.length;y++){
+                    streak[y]=0;
+                }
+                for (int i=0;i<months.length;i++){
+                    for (int j=0;j<DAYS;j++){
+                        if (profitData[i][j][a]<0){
+                            streak[i]++;
+
+                        }
+                        else if(profitData[i][j][a]>=0){
+                            streak[i]=0;
+                        }
+                    }
+                    if (streak[i]>bestStreak){
+                        bestStreak=streak[i];
+                    }
+                }
+                return bestStreak;
+            }
+        }
+        return -1;
     }
     
-    public static int daysAboveThreshold(String comm, int threshold) { 
-        return 1234; 
+    public static int daysAboveThreshold(String comm, int threshold) {
+        for (int a=0;a<commodities.length;a++){
+            if (comm.equals(commodities[a])){
+                int totalDay=0;
+                for (int i=0;i<months.length;i++){
+                    for (int j=0;j<DAYS;j++){
+                        if (profitData[i][j][a]>threshold){
+                            totalDay++;
+                        }
+                    }
+                }
+                return totalDay;
+            }
+        }
+        return -1;
     }
 
-    public static int biggestDailySwing(int month) { 
-        return 1234; 
+    public static int biggestDailySwing(int month) {
+        if(month<12 && month>=0) {
+            int max = 0;
+            int min = 0;
+
+            for (int i = 0; i < DAYS; i++) {
+                int totday = 0;
+                for (int j = 0; j < commodities.length; j++) {
+                    totday += profitData[month][i][j];
+                }
+                if (totday > max) {
+                    max = totday;
+                }
+                if (totday < min) {
+                    min = totday;
+                }
+            }
+            return max-min;
+        }
+        return -99999;
     }
     
     public static String compareTwoCommodities(String c1, String c2) { 
