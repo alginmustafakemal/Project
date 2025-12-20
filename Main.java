@@ -231,12 +231,80 @@ public class Main {
         return -99999;
     }
     
-    public static String compareTwoCommodities(String c1, String c2) { 
-        return "DUMMY is better by 1234"; 
+    public static String compareTwoCommodities(String c1, String c2) {
+        int totc1=0;
+        int totc2=0;
+        String c1s="";
+        String c2s="";
+        for (int a=0;a<commodities.length;a++){
+            if(c1.equals(commodities[a])){
+                c1s=commodities[a];
+                for (int i=0;i<months.length;i++){
+                    for (int j=0;j<DAYS;j++){
+                        totc1+=profitData[i][j][a];
+                    }
+                }
+                break;
+            }
+        }
+        for (int b=0;b<commodities.length;b++){
+            if(c2.equals(commodities[b])){
+                c2s=commodities[b];
+                for (int z=0;z<months.length;z++){
+                    for (int k=0;k<DAYS;k++){
+                        totc2+=profitData[z][k][b];
+                    }
+                }
+                break;
+            }
+        }
+        if(totc1>totc2){
+            return c1s+" is better by "+(totc1-totc2);
+        }
+        else if(totc1==totc2){
+            return  "Equal";
+        }
+        else {
+            return c2s+" is better by "+(totc2-totc1);
+        }
     }
     
-    public static String bestWeekOfMonth(int month) { 
-        return "DUMMY"; 
+    public static String bestWeekOfMonth(int month) {
+        if(month<12 && month>=0) {
+            int[] totweek = new int[4];
+            int bestweek = 0;
+            int wk=0;
+            for (int i = 0; i < DAYS; i++) {
+                if (i < 7){
+                    for(int k=0;k<commodities.length;k++) {
+                        totweek[0] += profitData[month][i][k];
+                    }
+                }
+                else if (i < 14){
+                    for(int k=0;k<commodities.length;k++) {
+                        totweek[1] += profitData[month][i][k];
+                    }
+                }
+                else if (i < 21){
+                    for(int k=0;k<commodities.length;k++) {
+                        totweek[2] += profitData[month][i][k];
+                    }
+                }
+                else if (i < 28){
+                    for(int k=0;k<commodities.length;k++) {
+                        totweek[3] += profitData[month][i][k];
+                    }
+                }
+            }
+            for (int j = 0; j < totweek.length; j++) {
+                if (totweek[j] > bestweek) {
+                    bestweek = totweek[j];
+                    wk=j+1;
+                }
+            }
+            return "Week " + wk;
+        }
+        return  "INVALID_MONTH";
     }
 
     public static void main(String[] args) {
