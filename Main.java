@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Main {
-    pubblic int[][][] profitData=new int[12][28][5];
+    public static int[][][] profitData=new int[12][28][5];
     static final int MONTHS = 12;
     static final int DAYS = 28;
     static final int COMMS = 5;
